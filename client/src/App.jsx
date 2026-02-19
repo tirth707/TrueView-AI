@@ -29,7 +29,8 @@ function App() {
   return (
     <div className="app-container">
       <header className="navbar">
-        <h1>TrueView AI 🛡️</h1>
+        <h1>TrueView AI</h1>
+        <p>AI-Powered Fake Review Detection</p>
       </header>
 
       <main className="main-content">
