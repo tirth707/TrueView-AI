@@ -3,7 +3,6 @@ const router = express.Router();
 const axios = require('axios');
 const Product = require('../models/Product');
 
-// POST http://localhost:5001/api/analyze
 router.post('/', async (req, res) => {
     try {
         const { url } = req.body;
@@ -12,39 +11,36 @@ router.post('/', async (req, res) => {
             return res.status(400).json({ error: "URL is required" });
         }
 
-        // 1. Check if we already analyzed this exact URL (Cache)
         let existingProduct = await Product.findOne({ url });
         if (existingProduct) {
-            console.log("📦 Found in Database!");
+            console.log("📦 Found in Database Cache!");
             return res.json({ message: "Found in Cache", data: existingProduct });
         }
 
         console.log(`🐍 Sending URL to Python Engine: ${url}`);
 
-        // 2. Call the Python Microservice (Running on Port 6000)
         const pythonResponse = await axios.post('http://127.0.0.1:6000/scan', { url });
         const scrapedData = pythonResponse.data;
 
-        // 3. Prepare the final data to save (Mixing scraped data with mock AI for now)
+        // Map the real AI data from Python to our MongoDB schema
         const newAnalysis = {
             url: url,
             productName: scrapedData.productName || "Unknown Product",
             platform: scrapedData.platform || "Amazon",
-            trustScore: Math.floor(Math.random() * (95 - 40 + 1)) + 40, // Random score between 40-95 for now
+            trustScore: scrapedData.trustScore || 50,
             summary: {
-                pros: ["Verified Purchase Patterns", "Consistent Review Dates"],
-                cons: ["Some generic 5-star reviews"],
-                verdict: scrapedData.status === "Scraped Successfully" ? "Pending AI Verdict" : "Error"
+                pros: scrapedData.pros || ["No data"],
+                cons: scrapedData.cons || ["No data"],
+                verdict: scrapedData.verdict || "Error analyzing sentiment"
             },
             totalReviews: 0,
             fakeReviewsDetected: 0
         };
 
-        // 4. Save to MongoDB
         const newProduct = new Product(newAnalysis);
         await newProduct.save();
 
-        console.log("✅ Analysis Saved to DB!");
+        console.log("✅ Real AI Analysis Saved to DB!");
         res.json({ message: "Analysis Complete", data: newProduct });
 
     } catch (error) {
