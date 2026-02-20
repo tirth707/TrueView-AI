@@ -1,42 +1,55 @@
 const express = require('express');
 const router = express.Router();
-const Product = require('../models/Product'); // Import your DB Model
+const axios = require('axios');
+const Product = require('../models/Product');
 
 // POST http://localhost:5001/api/analyze
 router.post('/', async (req, res) => {
     try {
         const { url } = req.body;
 
-        // 1. Check: Have we analyzed this URL before?
+        if (!url) {
+            return res.status(400).json({ error: "URL is required" });
+        }
+
+        // 1. Check if we already analyzed this exact URL (Cache)
         let existingProduct = await Product.findOne({ url });
         if (existingProduct) {
+            console.log("📦 Found in Database!");
             return res.json({ message: "Found in Cache", data: existingProduct });
         }
 
-        // 2. Mock Analysis (Placeholder for your AI Logic)
-        // Later, we will put the Python/AI script here.
-        const mockData = {
+        console.log(`🐍 Sending URL to Python Engine: ${url}`);
+
+        // 2. Call the Python Microservice (Running on Port 6000)
+        const pythonResponse = await axios.post('http://127.0.0.1:6000/scan', { url });
+        const scrapedData = pythonResponse.data;
+
+        // 3. Prepare the final data to save (Mixing scraped data with mock AI for now)
+        const newAnalysis = {
             url: url,
-            productName: "Sony WH-1000XM5 Wireless Headphones",
-            platform: url.includes("amazon") ? "Amazon" : "Flipkart",
-            trustScore: 88,
+            productName: scrapedData.productName || "Unknown Product",
+            platform: scrapedData.platform || "Amazon",
+            trustScore: Math.floor(Math.random() * (95 - 40 + 1)) + 40, // Random score between 40-95 for now
             summary: {
-                pros: ["Amazing Noise Cancellation", "Lightweight", "Good Battery"],
-                cons: ["Expensive", "No Water Resistance"],
-                verdict: "Safe Buy"
+                pros: ["Verified Purchase Patterns", "Consistent Review Dates"],
+                cons: ["Some generic 5-star reviews"],
+                verdict: scrapedData.status === "Scraped Successfully" ? "Pending AI Verdict" : "Error"
             },
-            totalReviews: 1500,
-            fakeReviewsDetected: 120
+            totalReviews: 0,
+            fakeReviewsDetected: 0
         };
 
-        // 3. Save to MongoDB
-        const newProduct = new Product(mockData);
+        // 4. Save to MongoDB
+        const newProduct = new Product(newAnalysis);
         await newProduct.save();
 
+        console.log("✅ Analysis Saved to DB!");
         res.json({ message: "Analysis Complete", data: newProduct });
 
     } catch (error) {
-        res.status(500).json({ error: "Server Error", details: error.message });
+        console.error("❌ Backend Error:", error.message);
+        res.status(500).json({ error: "Failed to analyze product. Is Python running?", details: error.message });
     }
 });
 
