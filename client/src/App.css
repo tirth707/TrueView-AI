@@ -251,3 +251,63 @@ li {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* Alternatives Section */
+.alternatives-section {
+  margin-top: 40px;
+  padding-top: 30px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.alternatives-section h4 {
+  font-size: 1.4rem;
+  margin-bottom: 20px;
+  color: #fbbf24;
+  text-shadow: 0 0 15px rgba(251, 191, 36, 0.4);
+}
+
+.alternatives-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 15px;
+}
+
+.alternative-card {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border-radius: 16px;
+  text-decoration: none;
+  color: white;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.alternative-card:hover {
+  transform: translateX(10px);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+}
+
+.alt-score {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-right: 25px;
+  min-width: 60px;
+  text-align: center;
+}
+
+.alt-details h5 {
+  margin: 0 0 5px 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.alt-details p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}

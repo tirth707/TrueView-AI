@@ -90,6 +90,23 @@ function App() {
                 </ul>
               </div>
             </div>
+
+            {result.alternatives && result.alternatives.length > 0 && (
+              <div className="alternatives-section">
+                <h4>✨ Better Alternatives</h4>
+                <div className="alternatives-grid">
+                  {result.alternatives.map((alt, idx) => (
+                    <a href={alt.url} target="_blank" rel="noreferrer" className="alternative-card" key={idx}>
+                      <div className="alt-score" style={{ color: getScoreColor(alt.score) }}>{alt.score}%</div>
+                      <div className="alt-details">
+                        <h5>{alt.name}</h5>
+                        <p>{alt.reason}</p>
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </main>

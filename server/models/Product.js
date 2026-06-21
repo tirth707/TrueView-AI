@@ -7,14 +7,19 @@ const ProductSchema = new mongoose.Schema({
     trustScore: { type: Number }, 
     analysisDate: { type: Date, default: Date.now },
     
-    
     summary: {
         pros: [String],
         cons: [String],
         verdict: String 
     },
 
-   
+    alternatives: [{
+        name: String,
+        url: String,
+        score: Number,
+        reason: String
+    }],
+
     totalReviews: Number,
     fakeReviewsDetected: Number
 });
