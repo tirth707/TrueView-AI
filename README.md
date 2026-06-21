@@ -42,5 +42,5 @@ Follow these steps to run TrueView AI locally.
 
 ### 1. Clone the Repository
 ```bash
-git clone [https://github.com/YOUR_USERNAME/TrueView-AI.git](https://github.com/YOUR_USERNAME/TrueView-AI.git)
+git clone [https://github.com/tirth707/TrueView-AI.git](https://github.com/tirth707/TrueView-AI.git)
 cd TrueView-AI
